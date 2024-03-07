@@ -4,6 +4,9 @@ import clear from '../assets/clear.jpg'
 import cloudy from '../assets/cloudy.jpg'
 import mist from '../assets/mist.jpg'
 import snow from '../assets/snow.jpg'
+import rain from '../assets/rain.jpg'
+import drizzle from '../assets/drizzle.jpg'
+import thunderStorm from '../assets/thunderStorm.jpg'
 
 const Weather = () => {
 
@@ -12,7 +15,7 @@ const Weather = () => {
     const [image,setImage] = useState('')
 
     useEffect(()=>{
-        setWeather({...weather,date:formatDate(new Date())})
+        // setWeather({...weather,date:formatDate(new Date())})
         setWeatherHandle()
     },[])
 
@@ -27,7 +30,6 @@ const Weather = () => {
 
     const setWeatherHandle = async()=>{
         const res =  await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=18f8ed9769c1b8ef31af7a3bf6e7ebc8&units=metric`)
-        console.log(res.data.wind)
         let code = res.data.weather[0].id
         if(code > 800){
             setImage(cloudy)
@@ -41,6 +43,15 @@ const Weather = () => {
         else if(code >= 600 && code < 700){
             setImage(snow)
         }
+        else if(code >=500 && code < 600){
+            setImage(rain)
+        }
+        else if(code >= 300 && code < 500){
+            setImage(drizzle)
+        }
+        else if(code >=200 && code <300){
+            setImage(thunderStorm)
+        }
 
 
         setWeather({...weather,
@@ -51,7 +62,9 @@ const Weather = () => {
             wind: res.data.wind.speed,
             visibility : res.data.visibility / 1000,
             location : res.data.name,
-            weather : res.data.weather[0].main
+            weather : res.data.weather[0].main,
+            icon : res.data.weather[0].icon,
+            date:formatDate(new Date())
         })
     }
 
@@ -81,22 +94,9 @@ const Weather = () => {
                 </form>
                 <div className="font-bold text-3xl">{weather.location}</div>
                 <div className="text-sm text-gray-800">{weather.date}</div>
-                {/* <div className="mt-6 text-6xl self-center inline-flex items-center justify-center rounded-lg text-indigo-400 h-24 w-24">
-                    <svg
-                        className="w-32 h-32"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
-                        />
-                    </svg>
-                </div> */}
+                <div className="mt-4 self-center items-center justify-center h-24 w-24">
+                    <img src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`} alt="" />
+                </div>
                 <div className="flex flex-row items-center justify-center mt-6">
                     <div className="font-medium text-6xl my-2">{weather.temperature}°</div>
                     <div className="flex flex-col items-center ml-6">
